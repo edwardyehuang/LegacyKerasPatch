@@ -12,19 +12,27 @@ def adaptive_average_pool(inputs, output_size, data_format="channels_last"):
     """Adaptive average pooling operation."""
     input_shape = tf.shape(inputs)
     ndim = len(inputs.shape)
+    
+    # Convert data_format to TensorFlow format
+    if data_format == "channels_last":
+        tf_data_format = "NHWC"
+    else:
+        tf_data_format = "NCHW"
 
     if ndim == 3:
         # 1D pooling
         if data_format == "channels_last":
             input_length = input_shape[1]
+            tf_data_format = "NWC"
         else:
             input_length = input_shape[2]
+            tf_data_format = "NCW"
 
         if isinstance(output_size, (list, tuple)):
             output_size = output_size[0]
 
         pool_size = input_length // output_size
-        return tf.nn.avg_pool1d(inputs, pool_size, pool_size, "VALID", data_format.upper())
+        return tf.nn.avg_pool1d(inputs, pool_size, pool_size, "VALID", tf_data_format)
     elif ndim == 4:
         # 2D pooling
         if data_format == "channels_last":
@@ -37,13 +45,15 @@ def adaptive_average_pool(inputs, output_size, data_format="channels_last"):
 
         pool_h = h // output_size[0]
         pool_w = w // output_size[1]
-        return tf.nn.avg_pool2d(inputs, (pool_h, pool_w), (pool_h, pool_w), "VALID", data_format.upper())
+        return tf.nn.avg_pool2d(inputs, (pool_h, pool_w), (pool_h, pool_w), "VALID", tf_data_format)
     elif ndim == 5:
         # 3D pooling
         if data_format == "channels_last":
             d, h, w = input_shape[1], input_shape[2], input_shape[3]
+            tf_data_format = "NDHWC"
         else:
             d, h, w = input_shape[2], input_shape[3], input_shape[4]
+            tf_data_format = "NCDHW"
 
         if isinstance(output_size, int):
             output_size = (output_size, output_size, output_size)
@@ -51,7 +61,7 @@ def adaptive_average_pool(inputs, output_size, data_format="channels_last"):
         pool_d = d // output_size[0]
         pool_h = h // output_size[1]
         pool_w = w // output_size[2]
-        return tf.nn.avg_pool3d(inputs, (pool_d, pool_h, pool_w), (pool_d, pool_h, pool_w), "VALID", data_format.upper())
+        return tf.nn.avg_pool3d(inputs, (pool_d, pool_h, pool_w), (pool_d, pool_h, pool_w), "VALID", tf_data_format)
     else:
         raise ValueError(f"Invalid input dimension: {ndim}")
 
@@ -60,19 +70,27 @@ def adaptive_max_pool(inputs, output_size, data_format="channels_last"):
     """Adaptive max pooling operation."""
     input_shape = tf.shape(inputs)
     ndim = len(inputs.shape)
+    
+    # Convert data_format to TensorFlow format
+    if data_format == "channels_last":
+        tf_data_format = "NHWC"
+    else:
+        tf_data_format = "NCHW"
 
     if ndim == 3:
         # 1D pooling
         if data_format == "channels_last":
             input_length = input_shape[1]
+            tf_data_format = "NWC"
         else:
             input_length = input_shape[2]
+            tf_data_format = "NCW"
 
         if isinstance(output_size, (list, tuple)):
             output_size = output_size[0]
 
         pool_size = input_length // output_size
-        return tf.nn.max_pool1d(inputs, pool_size, pool_size, "VALID", data_format.upper())
+        return tf.nn.max_pool1d(inputs, pool_size, pool_size, "VALID", tf_data_format)
     elif ndim == 4:
         # 2D pooling
         if data_format == "channels_last":
@@ -85,13 +103,15 @@ def adaptive_max_pool(inputs, output_size, data_format="channels_last"):
 
         pool_h = h // output_size[0]
         pool_w = w // output_size[1]
-        return tf.nn.max_pool2d(inputs, (pool_h, pool_w), (pool_h, pool_w), "VALID", data_format.upper())
+        return tf.nn.max_pool2d(inputs, (pool_h, pool_w), (pool_h, pool_w), "VALID", tf_data_format)
     elif ndim == 5:
         # 3D pooling
         if data_format == "channels_last":
             d, h, w = input_shape[1], input_shape[2], input_shape[3]
+            tf_data_format = "NDHWC"
         else:
             d, h, w = input_shape[2], input_shape[3], input_shape[4]
+            tf_data_format = "NCDHW"
 
         if isinstance(output_size, int):
             output_size = (output_size, output_size, output_size)
@@ -99,7 +119,7 @@ def adaptive_max_pool(inputs, output_size, data_format="channels_last"):
         pool_d = d // output_size[0]
         pool_h = h // output_size[1]
         pool_w = w // output_size[2]
-        return tf.nn.max_pool3d(inputs, (pool_d, pool_h, pool_w), (pool_d, pool_h, pool_w), "VALID", data_format.upper())
+        return tf.nn.max_pool3d(inputs, (pool_d, pool_h, pool_w), (pool_d, pool_h, pool_w), "VALID", tf_data_format)
     else:
         raise ValueError(f"Invalid input dimension: {ndim}")
 
@@ -345,7 +365,9 @@ def moments(x, axes, keepdims=False, synchronized=False):
 def multi_hot(inputs, num_classes, axis=-1, dtype=None, sparse=False):
     """Multi-hot encoding."""
     dtype = dtype or tf.float32
-    return tf.reduce_sum(tf.one_hot(inputs, num_classes, dtype=dtype), axis=axis)
+    one_hot_encoded = tf.one_hot(inputs, num_classes, dtype=dtype)
+    # Sum over the second-to-last axis (the indices axis), not the num_classes axis
+    return tf.reduce_sum(one_hot_encoded, axis=-2)
 
 
 def normalize(x, axis=-1, order=2, epsilon=1e-12):
