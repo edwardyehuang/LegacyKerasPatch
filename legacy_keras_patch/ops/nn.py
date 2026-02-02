@@ -363,11 +363,37 @@ def moments(x, axes, keepdims=False, synchronized=False):
 
 
 def multi_hot(inputs, num_classes, axis=-1, dtype=None, sparse=False):
-    """Multi-hot encoding."""
+    """Multi-hot encoding.
+    
+    Args:
+        inputs: Tensor containing integer indices.
+        num_classes: Number of classes for the multi-hot encoding.
+        axis: The axis along which to place the num_classes dimension. Default is -1.
+        dtype: The data type of the output tensor. Default is float32.
+        sparse: Whether to return a sparse tensor (not currently supported).
+    
+    Returns:
+        Multi-hot encoded tensor.
+    """
     dtype = dtype or tf.float32
-    one_hot_encoded = tf.one_hot(inputs, num_classes, dtype=dtype)
-    # Sum over the second-to-last axis (the indices axis), not the num_classes axis
-    return tf.reduce_sum(one_hot_encoded, axis=-2)
+    one_hot_encoded = tf.one_hot(inputs, num_classes, dtype=dtype, axis=axis)
+    
+    # Determine which axis to reduce based on where we placed num_classes
+    # If axis is negative, convert to positive for comparison
+    ndim = len(inputs.shape)
+    if axis < 0:
+        positive_axis = axis + ndim + 1  # +1 because one_hot adds a dimension
+    else:
+        positive_axis = axis
+    
+    # We need to reduce over the last axis of the original input
+    # which is at position -2 relative to the num_classes axis
+    if axis == -1:
+        reduce_axis = -2
+    else:
+        reduce_axis = ndim  # The last axis of the original input in the one_hot output
+    
+    return tf.reduce_sum(one_hot_encoded, axis=reduce_axis)
 
 
 def normalize(x, axis=-1, order=2, epsilon=1e-12):
