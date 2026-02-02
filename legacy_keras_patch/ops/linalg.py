@@ -72,6 +72,12 @@ def lu_factor(x):
 
 def norm(x, ord=None, axis=None, keepdims=False):
     """Compute the matrix or vector norm."""
+    # Handle default ord value for vectors
+    if ord is None:
+        ord = 2
+    # Handle 'fro' (Frobenius norm) - TensorFlow uses 'euclidean'
+    elif ord == 'fro':
+        ord = 'euclidean'
     return tf.linalg.norm(x, ord=ord, axis=axis, keepdims=keepdims)
 
 
