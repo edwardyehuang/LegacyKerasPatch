@@ -70,7 +70,8 @@ def elastic_transform(images, alpha, sigma, interpolation="bilinear", fill_mode=
     dy = tf.random.uniform([batch_size, height, width], -1, 1) * alpha
     
     # Apply Gaussian smoothing (simplified)
-    kernel_size = int(sigma * 6) | 1  # Ensure odd
+    kernel_size = int(sigma * 6)
+    kernel_size = kernel_size if kernel_size % 2 == 1 else kernel_size + 1  # Ensure odd
     kernel = tf.cast(tf.range(kernel_size), tf.float32) - kernel_size // 2
     kernel = tf.exp(-0.5 * (kernel / sigma) ** 2)
     kernel = kernel / tf.reduce_sum(kernel)

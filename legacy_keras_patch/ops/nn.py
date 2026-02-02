@@ -4,6 +4,7 @@ Neural network operations for Keras 2 compatibility.
 This module provides keras.ops.nn compatible operations by wrapping TensorFlow functions.
 """
 
+import numpy as np
 import tensorflow as tf
 
 
@@ -254,7 +255,7 @@ def elu(x, alpha=1.0):
 def gelu(x, approximate=True):
     """Gaussian error linear unit."""
     if approximate:
-        return 0.5 * x * (1 + tf.tanh(tf.sqrt(2 / 3.141592653589793) * (x + 0.044715 * tf.pow(x, 3))))
+        return 0.5 * x * (1 + tf.tanh(tf.sqrt(2 / np.pi) * (x + 0.044715 * tf.pow(x, 3))))
     else:
         return x * 0.5 * (1.0 + tf.math.erf(x / tf.sqrt(2.0)))
 

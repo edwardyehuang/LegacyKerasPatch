@@ -331,7 +331,7 @@ def cumsum(x, axis=None, dtype=None):
 
 def deg2rad(x):
     """Convert angles from degrees to radians."""
-    return x * (3.141592653589793 / 180.0)
+    return x * (np.pi / 180.0)
 
 
 def diag(v, k=0):
