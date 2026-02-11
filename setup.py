@@ -15,6 +15,9 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/edwardyehuang/LegacyKerasPatch",
     packages=find_packages(),
+    package_data={
+        "legacy_keras_patch": ["py.typed", "ops/*.pyi"],
+    },
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
