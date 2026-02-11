@@ -14,9 +14,10 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/edwardyehuang/LegacyKerasPatch",
-    packages=find_packages(),
+    packages=find_packages() + ["keras-stubs", "keras-stubs.ops"],
     package_data={
         "legacy_keras_patch": ["py.typed", "ops/*.pyi"],
+        "keras-stubs": ["__init__.pyi", "METADATA.toml", "ops/*.pyi"],
     },
     classifiers=[
         "Development Status :: 4 - Beta",
