@@ -7,6 +7,30 @@ This module provides keras.ops.numpy compatible operations by wrapping TensorFlo
 import tensorflow as tf
 import numpy as np
 
+__all__ = [
+    "abs", "absolute", "add", "all", "amax", "amin", "angle", "any", "append", "arange",
+    "arccos", "arccosh", "arcsin", "arcsinh", "arctan", "arctan2", "arctanh",
+    "argmax", "argmin", "argpartition", "argsort", "array", "array_split", "average",
+    "bartlett", "bincount",
+    "bitwise_and", "bitwise_invert", "bitwise_left_shift", "bitwise_not", "bitwise_or", "bitwise_right_shift", "bitwise_xor",
+    "blackman", "broadcast_to", "cbrt", "ceil", "clip", "concatenate", "conj", "conjugate", "copy",
+    "corrcoef", "correlate", "cos", "cosh", "count_nonzero", "cross", "cumprod", "cumsum",
+    "deg2rad", "diag", "diagflat", "diagonal", "diff", "digitize", "divide", "divide_no_nan", "dot", "einsum",
+    "empty", "empty_like", "equal", "exp", "exp2", "expand_dims", "expm1", "eye", "flip", "floor", "floor_divide",
+    "full", "full_like", "gcd", "get_item", "greater", "greater_equal",
+    "hamming", "hanning", "heaviside", "histogram", "hstack", "hypot", "identity", "imag", "inner",
+    "isclose", "isfinite", "isin", "isinf", "isnan", "isneginf", "isposinf", "isreal", "kaiser", "kron",
+    "lcm", "ldexp", "left_shift", "less", "less_equal", "linspace", "log", "log10", "log1p", "log2",
+    "logaddexp", "logaddexp2", "logical_and", "logical_not", "logical_or", "logical_xor", "logspace",
+    "matmul", "max", "maximum", "mean", "median", "meshgrid", "min", "minimum", "mod", "moveaxis", "multiply",
+    "nan_to_num", "ndim", "negative", "nonzero", "not_equal", "ones", "ones_like", "outer", "pad", "power", "prod",
+    "quantile", "ravel", "real", "reciprocal", "repeat", "reshape", "right_shift", "roll", "rot90", "round",
+    "searchsorted", "select", "sign", "signbit", "sin", "sinh", "size", "slogdet", "sort", "split", "sqrt", "square",
+    "squeeze", "stack", "std", "subtract", "sum", "swapaxes", "take", "take_along_axis", "tan", "tanh",
+    "tensordot", "tile", "trace", "transpose", "trapezoid", "tri", "tril", "triu", "true_divide", "trunc",
+    "unravel_index", "vander", "var", "vdot", "vectorize", "view", "vstack", "where", "zeros", "zeros_like",
+]
+
 
 def abs(x):
     """Compute element-wise absolute value."""

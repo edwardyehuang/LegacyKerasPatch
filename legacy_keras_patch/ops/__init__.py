@@ -57,6 +57,53 @@ from .linalg import (
 )
 # Note: jvp and norm are handled separately to avoid conflicts
 
+__all__ = [
+    # Submodules
+    "nn", "image", "linalg", "numpy",
+    # NumPy operations re-exported at top level
+    "abs", "absolute", "add", "all", "amax", "amin", "angle", "any", "append", "arange",
+    "arccos", "arccosh", "arcsin", "arcsinh", "arctan", "arctan2", "arctanh",
+    "argmax", "argmin", "argpartition", "argsort", "array", "array_split", "average",
+    "bartlett", "bincount",
+    "bitwise_and", "bitwise_invert", "bitwise_left_shift", "bitwise_not", "bitwise_or", "bitwise_right_shift", "bitwise_xor",
+    "blackman", "broadcast_to", "cbrt", "ceil", "clip", "concatenate", "conj", "conjugate", "copy",
+    "corrcoef", "correlate", "cos", "cosh", "count_nonzero", "cross", "cumprod", "cumsum",
+    "deg2rad", "diag", "diagflat", "diagonal", "diff", "digitize", "divide", "divide_no_nan", "dot", "einsum",
+    "empty", "empty_like", "equal", "exp", "exp2", "expand_dims", "expm1", "eye", "flip", "floor", "floor_divide",
+    "full", "full_like", "gcd", "get_item", "greater", "greater_equal",
+    "hamming", "hanning", "heaviside", "histogram", "hstack", "hypot", "identity", "imag", "inner",
+    "isclose", "isfinite", "isin", "isinf", "isnan", "isneginf", "isposinf", "isreal", "kaiser", "kron",
+    "lcm", "ldexp", "left_shift", "less", "less_equal", "linspace", "log", "log10", "log1p", "log2",
+    "logaddexp", "logaddexp2", "logical_and", "logical_not", "logical_or", "logical_xor", "logspace",
+    "matmul", "max", "maximum", "mean", "median", "meshgrid", "min", "minimum", "mod", "moveaxis", "multiply",
+    "nan_to_num", "ndim", "negative", "nonzero", "not_equal", "ones", "ones_like", "outer", "pad", "power", "prod",
+    "quantile", "ravel", "real", "reciprocal", "repeat", "reshape", "right_shift", "roll", "rot90", "round",
+    "searchsorted", "select", "sign", "signbit", "sin", "sinh", "size", "slogdet", "sort", "split", "sqrt", "square",
+    "squeeze", "stack", "std", "subtract", "sum", "swapaxes", "take", "take_along_axis", "tan", "tanh",
+    "tensordot", "tile", "trace", "transpose", "trapezoid", "tri", "tril", "triu", "true_divide", "trunc",
+    "unravel_index", "vander", "var", "vdot", "vectorize", "view", "vstack", "where", "zeros", "zeros_like",
+    # NN operations re-exported at top level
+    "adaptive_average_pool", "adaptive_max_pool", "average_pool", "batch_normalization",
+    "binary_crossentropy", "categorical_crossentropy", "celu", "conv", "conv_transpose",
+    "ctc_decode", "ctc_loss", "depthwise_conv", "dot_product_attention", "elu", "gelu", "glu",
+    "hard_shrink", "hard_sigmoid", "hard_silu", "hard_swish", "hard_tanh", "layer_normalization",
+    "leaky_relu", "log_sigmoid", "log_softmax", "max_pool", "moments", "multi_hot", "normalize",
+    "one_hot", "polar", "psnr", "relu", "relu6", "rms_normalization", "selu", "separable_conv",
+    "sigmoid", "silu", "soft_shrink", "softmax", "softplus", "softsign", "sparse_categorical_crossentropy",
+    "sparse_plus", "sparse_sigmoid", "sparsemax", "squareplus", "swish", "tanh_shrink", "threshold", "unfold",
+    # Linalg operations re-exported at top level
+    "cholesky", "cholesky_inverse", "det", "eig", "eigh", "inv",
+    "lstsq", "lu_factor", "qr", "solve", "solve_triangular", "svd",
+    # Core operations
+    "associative_scan", "cast", "cond", "convert_to_numpy", "convert_to_tensor", "custom_gradient",
+    "dtype", "erf", "erfinv", "extract_sequences", "fft", "fft2", "fori_loop",
+    "ifft2", "in_top_k", "irfft", "is_tensor", "istft", "jvp", "logdet", "logsumexp",
+    "map", "norm", "rearrange", "rfft", "rsqrt", "saturate_cast", "scan",
+    "scatter", "scatter_update", "segment_max", "segment_sum", "shape", "slice", "slice_update",
+    "stft", "stop_gradient", "switch", "top_k", "unstack", "vectorized_map",
+    "view_as_complex", "view_as_real", "while_loop",
+]
+
 
 # Additional core operations
 

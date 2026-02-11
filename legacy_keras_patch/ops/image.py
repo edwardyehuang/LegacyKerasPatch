@@ -6,6 +6,12 @@ This module provides keras.ops.image compatible operations by wrapping TensorFlo
 
 import tensorflow as tf
 
+__all__ = [
+    "affine_transform", "crop_images", "elastic_transform", "extract_patches", "extract_patches_3d",
+    "gaussian_blur", "hsv_to_rgb", "map_coordinates", "pad_images", "perspective_transform",
+    "resize", "rgb_to_grayscale", "rgb_to_hsv", "scale_and_translate",
+]
+
 
 def affine_transform(images, transform, interpolation="bilinear", fill_mode="constant", fill_value=0.0, data_format="channels_last"):
     """Apply an affine transformation to images."""
