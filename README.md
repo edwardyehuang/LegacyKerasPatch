@@ -11,6 +11,7 @@ LegacyKerasPatch enables Keras 2 users to migrate their code to use `keras.ops`,
 - Wraps TensorFlow operations (tf.nn, tf.linalg, tf.image, etc.)
 - Automatically detects Keras version - does nothing on Keras 3
 - Manual activation via function call
+- **Editor autocomplete support:** Includes type stubs so that editors like VS Code provide autocomplete and type hints for `keras.ops` statically — even before running `apply_patch()`
 
 ## Installation
 
