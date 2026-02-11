@@ -7,6 +7,17 @@ This module provides keras.ops.nn compatible operations by wrapping TensorFlow f
 import numpy as np
 import tensorflow as tf
 
+__all__ = [
+    "adaptive_average_pool", "adaptive_max_pool", "average_pool", "batch_normalization",
+    "binary_crossentropy", "categorical_crossentropy", "celu", "conv", "conv_transpose",
+    "ctc_decode", "ctc_loss", "depthwise_conv", "dot_product_attention", "elu", "gelu", "glu",
+    "hard_shrink", "hard_sigmoid", "hard_silu", "hard_swish", "hard_tanh", "layer_normalization",
+    "leaky_relu", "log_sigmoid", "log_softmax", "max_pool", "moments", "multi_hot", "normalize",
+    "one_hot", "polar", "psnr", "relu", "relu6", "rms_normalization", "selu", "separable_conv",
+    "sigmoid", "silu", "soft_shrink", "softmax", "softplus", "softsign", "sparse_categorical_crossentropy",
+    "sparse_plus", "sparse_sigmoid", "sparsemax", "squareplus", "swish", "tanh_shrink", "threshold", "unfold",
+]
+
 
 def adaptive_average_pool(inputs, output_size, data_format="channels_last"):
     """Adaptive average pooling operation."""

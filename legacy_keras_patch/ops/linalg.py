@@ -6,6 +6,11 @@ This module provides keras.ops.linalg compatible operations by wrapping TensorFl
 
 import tensorflow as tf
 
+__all__ = [
+    "cholesky", "cholesky_inverse", "det", "eig", "eigh", "inv",
+    "jvp", "lstsq", "lu_factor", "norm", "qr", "solve", "solve_triangular", "svd",
+]
+
 
 def cholesky(x):
     """Compute the Cholesky decomposition of a positive definite matrix."""
