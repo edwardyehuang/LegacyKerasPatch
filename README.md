@@ -19,7 +19,13 @@ LegacyKerasPatch enables Keras 2 users to migrate their code to use `keras.ops`,
 pip install legacy-keras-patch
 ```
 
-Or install from source:
+Or install from GitHub directly:
+
+```bash
+pip install git+https://github.com/edwardyehuang/LegacyKerasPatch.git
+```
+
+Or install from source (editable/development mode):
 
 ```bash
 git clone https://github.com/edwardyehuang/LegacyKerasPatch.git
