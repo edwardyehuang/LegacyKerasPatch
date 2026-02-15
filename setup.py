@@ -39,7 +39,7 @@ setup(
         "keras-stubs.utils",
     ],
     package_data={
-        "legacy_keras_patch": ["py.typed", "ops/*.pyi"],
+        "legacy_keras_patch": ["py.typed", "ops/*.pyi", "random/*.pyi"],
         "keras-stubs": [
             "__init__.pyi",
             "METADATA.toml",

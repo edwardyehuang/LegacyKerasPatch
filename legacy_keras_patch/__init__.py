@@ -19,6 +19,7 @@ Usage:
 __version__ = "1.0.0"
 
 from . import ops
+from . import random
 
 
 def _get_keras_version():
@@ -63,12 +64,14 @@ def apply_patch():
         import keras
         
         # Check if keras.ops already exists
-        if hasattr(keras, 'ops'):
-            # Already patched or exists
-            return
+        if not hasattr(keras, 'ops'):
+            # Attach our ops module to keras
+            keras.ops = ops
         
-        # Attach our ops module to keras
-        keras.ops = ops
+        # Check if keras.random already exists
+        if not hasattr(keras, 'random'):
+            # Attach our random module to keras
+            keras.random = random
         
     except ImportError:
         raise ImportError(
@@ -118,4 +121,5 @@ __all__ = [
     'get_keras_version',
     'is_keras_3',
     'ops',
+    'random',
 ]
