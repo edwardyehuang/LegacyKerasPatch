@@ -187,8 +187,6 @@ def shuffle(x, axis=0, seed=None):
         The shuffled tensor.
     """
     seed = _get_seed(seed)
-    if seed is not None:
-        tf.random.set_seed(seed)
     if axis == 0:
         return tf.random.shuffle(x, seed=seed)
     # For other axes, transpose, shuffle, transpose back
@@ -239,7 +237,7 @@ def binomial(shape, counts, probabilities, dtype=None, seed=None):
     max_count = tf.reduce_max(counts)
     # Generate uniform samples for each trial
     uniform_samples = tf.random.uniform(
-        tf.concat([shape, [max_count]], axis=0),
+        list(shape) + [max_count],
         dtype=tf.float32,
         seed=seed_val,
     )
