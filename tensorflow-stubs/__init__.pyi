@@ -11,6 +11,7 @@ from tensorflow import bitwise as bitwise
 from tensorflow import random as random
 from tensorflow import raw_ops as raw_ops
 from tensorflow import experimental as experimental
+from tensorflow import debugging as debugging
 
 # Common dtypes
 float16: Any

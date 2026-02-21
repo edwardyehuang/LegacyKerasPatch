@@ -48,6 +48,7 @@ setup(
         "tensorflow-stubs.raw_ops",
         "tensorflow-stubs.experimental",
         "tensorflow-stubs.experimental.numpy",
+        "tensorflow-stubs.debugging",
     ],
     package_data={
         "legacy_keras_patch": ["py.typed", "ops/*.pyi", "random/*.pyi"],
@@ -89,6 +90,7 @@ setup(
             "raw_ops/*.pyi",
             "experimental/*.pyi",
             "experimental/numpy/*.pyi",
+            "debugging/*.pyi",
         ],
     },
     classifiers=[
