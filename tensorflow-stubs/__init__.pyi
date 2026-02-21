@@ -2,35 +2,16 @@
 
 from typing import Any
 
-from tensorflow import nn as nn
-from tensorflow import math as math
-from tensorflow import linalg as linalg
-from tensorflow import signal as signal
-from tensorflow import image as image
-from tensorflow import bitwise as bitwise
-from tensorflow import random as random
-from tensorflow import raw_ops as raw_ops
-from tensorflow import experimental as experimental
-from tensorflow import debugging as debugging
-
-# Common dtypes
-float16: Any
-float32: Any
-float64: Any
-bfloat16: Any
-int8: Any
-int16: Any
-int32: Any
-int64: Any
-uint8: Any
-uint16: Any
-uint32: Any
-uint64: Any
-bool: Any
-string: Any
-complex64: Any
-complex128: Any
-newaxis: Any
+from . import nn as nn
+from . import math as math
+from . import linalg as linalg
+from . import signal as signal
+from . import image as image
+from . import bitwise as bitwise
+from . import random as random
+from . import raw_ops as raw_ops
+from . import experimental as experimental
+from . import debugging as debugging
 
 # Core classes
 class Tensor: ...
@@ -47,6 +28,25 @@ class GradientTape:
 class RaggedTensor: ...
 class SparseTensor: ...
 class TensorSpec: ...
+
+# Common dtypes
+float16: DType
+float32: DType
+float64: DType
+bfloat16: DType
+int8: DType
+int16: DType
+int32: DType
+int64: DType
+uint8: DType
+uint16: DType
+uint32: DType
+uint64: DType
+bool: DType
+string: DType
+complex64: DType
+complex128: DType
+newaxis: Any
 
 # Core functions
 def abs(x: Any, name: Any = ...) -> Any: ...
@@ -73,6 +73,7 @@ def cosh(x: Any, name: Any = ...) -> Any: ...
 def custom_gradient(f: Any) -> Any: ...
 def divide(x: Any, y: Any, name: Any = ...) -> Any: ...
 def einsum(equation: Any, *inputs: Any, **kwargs: Any) -> Any: ...
+def ensure_shape(x: Any, shape: Any, name: Any = ...) -> Any: ...
 def equal(x: Any, y: Any, name: Any = ...) -> Any: ...
 def exp(x: Any, name: Any = ...) -> Any: ...
 def expand_dims(input: Any, axis: Any, name: Any = ...) -> Any: ...
