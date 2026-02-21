@@ -49,6 +49,8 @@ setup(
         "tensorflow-stubs.experimental",
         "tensorflow-stubs.experimental.numpy",
         "tensorflow-stubs.debugging",
+        "tensorflow-stubs.autograph",
+        "tensorflow-stubs.autograph.experimental",
     ],
     package_data={
         "legacy_keras_patch": ["py.typed", "ops/*.pyi", "random/*.pyi"],
@@ -91,6 +93,8 @@ setup(
             "experimental/*.pyi",
             "experimental/numpy/*.pyi",
             "debugging/*.pyi",
+            "autograph/*.pyi",
+            "autograph/experimental/*.pyi",
         ],
     },
     classifiers=[
