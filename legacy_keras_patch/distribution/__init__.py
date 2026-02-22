@@ -158,103 +158,110 @@ class TensorLayout:
 # otherwise falls back to a standalone implementation.
 # ---------------------------------------------------------------------------
 
+
+class LayoutMap(collections.abc.MutableMapping):
+    """A dict-like object that maps string to ``TensorLayout`` instances.
+
+    The string key is treated as a regex when retrieving values.
+    This allows pattern-based layout specifications for model
+    variables.
+
+    As a shortcut, tuple or list of axis names are also accepted as
+    values and will be converted to ``TensorLayout``.
+
+    Example::
+
+        layout_map = LayoutMap(device_mesh)
+        layout_map['dense.*kernel'] = (None, 'model')
+        layout_map['dense.*bias'] = ('model',)
+
+        layout = layout_map['dense_1.kernel']  # matches via regex
+
+    Args:
+        device_mesh: ``DeviceMesh`` instance (also accepted via the
+            keyword *mesh* for compatibility with the Keras 2 dtensor
+            API).
+    """
+
+    def __init__(self, device_mesh=None, *, mesh=None):
+        self._layout_map = collections.OrderedDict()
+        self._device_mesh = device_mesh if device_mesh is not None else mesh
+
+    def __getitem__(self, key):
+        """Retrieve the layout matching *key*.
+
+        If there is no exact match, existing keys are treated as
+        regexes.  Returns ``None`` when no match is found.
+        """
+        if key in self._layout_map:
+            return self._layout_map[key]
+
+        matching_keys = []
+        for k in self._layout_map:
+            if re.search(k, key):
+                matching_keys.append(k)
+        if len(matching_keys) > 1:
+            raise ValueError(
+                f"Path '{key}' matches multiple layout "
+                f"specification keys: {matching_keys}. Please make "
+                "sure each tensor/variable path only matches at most "
+                "one layout specification key in the LayoutMap."
+            )
+        elif len(matching_keys) == 1:
+            return self._layout_map[matching_keys[0]]
+        return None
+
+    def __setitem__(self, key, layout):
+        if key in self._layout_map:
+            raise ValueError(
+                f"{key} already exist in the LayoutMap with "
+                f"value {self._layout_map[key]}. Please make sure to "
+                "not use duplicated keys."
+            )
+        if isinstance(layout, (tuple, list)):
+            layout = TensorLayout(axes=layout, device_mesh=None)
+
+        if not isinstance(layout, TensorLayout):
+            raise ValueError(
+                f"{layout} should be a TensorLayout type, "
+                f"got {type(layout)}"
+            )
+        self._maybe_populate_device_mesh(layout)
+        self._layout_map[key] = layout
+
+    def __delitem__(self, key):
+        return self._layout_map.pop(key)
+
+    def __len__(self):
+        return len(self._layout_map)
+
+    def __iter__(self):
+        return iter(self._layout_map)
+
+    @property
+    def device_mesh(self):
+        return self._device_mesh
+
+    def get_default_mesh(self):
+        """Return the default mesh (Keras 2 dtensor compat)."""
+        return self._device_mesh
+
+    def _maybe_populate_device_mesh(self, layout):
+        if layout.device_mesh is None and self.device_mesh is not None:
+            layout.device_mesh = self.device_mesh
+
+
 try:
-    from keras.src.dtensor.layout_map import LayoutMap  # Keras 2 (internal)
+    from keras.src.dtensor.layout_map import (
+        LayoutMap,  # Keras 2 (internal)  # noqa: F811
+    )
 except Exception:
     try:
-        from keras.dtensor.experimental import LayoutMap  # Keras 2 (public)
+        from keras.dtensor.experimental import (
+            LayoutMap,  # Keras 2 (public)  # noqa: F811
+        )
     except Exception:
-
-        class LayoutMap(collections.abc.MutableMapping):
-            """A dict-like object that maps string to ``TensorLayout`` instances.
-
-            The string key is treated as a regex when retrieving values.
-            This allows pattern-based layout specifications for model
-            variables.
-
-            As a shortcut, tuple or list of axis names are also accepted as
-            values and will be converted to ``TensorLayout``.
-
-            Example::
-
-                layout_map = LayoutMap(device_mesh)
-                layout_map['dense.*kernel'] = (None, 'model')
-                layout_map['dense.*bias'] = ('model',)
-
-                layout = layout_map['dense_1.kernel']  # matches via regex
-
-            Args:
-                device_mesh: ``DeviceMesh`` instance (also accepted via the
-                    keyword *mesh* for compatibility with the Keras 2 dtensor
-                    API).
-            """
-
-            def __init__(self, device_mesh=None, *, mesh=None):
-                self._layout_map = collections.OrderedDict()
-                self._device_mesh = device_mesh if device_mesh is not None else mesh
-
-            def __getitem__(self, key):
-                """Retrieve the layout matching *key*.
-
-                If there is no exact match, existing keys are treated as
-                regexes.  Returns ``None`` when no match is found.
-                """
-                if key in self._layout_map:
-                    return self._layout_map[key]
-
-                matching_keys = []
-                for k in self._layout_map:
-                    if re.search(k, key):
-                        matching_keys.append(k)
-                if len(matching_keys) > 1:
-                    raise ValueError(
-                        f"Path '{key}' matches multiple layout "
-                        f"specification keys: {matching_keys}. Please make "
-                        "sure each tensor/variable path only matches at most "
-                        "one layout specification key in the LayoutMap."
-                    )
-                elif len(matching_keys) == 1:
-                    return self._layout_map[matching_keys[0]]
-                return None
-
-            def __setitem__(self, key, layout):
-                if key in self._layout_map:
-                    raise ValueError(
-                        f"{key} already exist in the LayoutMap with "
-                        f"value {self._layout_map[key]}. Please make sure to "
-                        "not use duplicated keys."
-                    )
-                if isinstance(layout, (tuple, list)):
-                    layout = TensorLayout(axes=layout, device_mesh=None)
-
-                if not isinstance(layout, TensorLayout):
-                    raise ValueError(
-                        f"{layout} should be a TensorLayout type, "
-                        f"got {type(layout)}"
-                    )
-                self._maybe_populate_device_mesh(layout)
-                self._layout_map[key] = layout
-
-            def __delitem__(self, key):
-                return self._layout_map.pop(key)
-
-            def __len__(self):
-                return len(self._layout_map)
-
-            def __iter__(self):
-                return iter(self._layout_map)
-
-            @property
-            def device_mesh(self):
-                return self._device_mesh
-
-            def get_default_mesh(self):
-                """Return the default mesh (Keras 2 dtensor compat)."""
-                return self._device_mesh
-
-            def _maybe_populate_device_mesh(self, layout):
-                if layout.device_mesh is None and self.device_mesh is not None:
-                    layout.device_mesh = self.device_mesh
+        pass
 
 
 class DataParallel:
