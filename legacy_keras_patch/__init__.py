@@ -18,6 +18,7 @@ Usage:
 
 __version__ = "1.0.0"
 
+from . import distribution
 from . import ops
 from . import random
 
@@ -73,6 +74,11 @@ def apply_patch():
             # Attach our random module to keras
             keras.random = random
         
+        # Check if keras.distribution already exists
+        if not hasattr(keras, 'distribution'):
+            # Attach our distribution module to keras
+            keras.distribution = distribution
+        
     except ImportError:
         raise ImportError(
             "Keras is not installed. Please install Keras 2 or Keras 3 "
@@ -120,6 +126,7 @@ __all__ = [
     'is_patched', 
     'get_keras_version',
     'is_keras_3',
+    'distribution',
     'ops',
     'random',
 ]

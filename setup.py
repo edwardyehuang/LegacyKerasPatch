@@ -55,7 +55,7 @@ setup(
         "tensorflow-stubs.autograph.experimental",
     ],
     package_data={
-        "legacy_keras_patch": ["py.typed", "ops/*.pyi", "random/*.pyi"],
+        "legacy_keras_patch": ["py.typed", "ops/*.pyi", "random/*.pyi", "distribution/*.pyi"],
         "keras-stubs": [
             "__init__.pyi",
             "METADATA.toml",
