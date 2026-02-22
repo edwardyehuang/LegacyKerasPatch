@@ -2,15 +2,8 @@
 
 from typing import Any
 
-def do_not_convert(func: Any = ...) -> Any: ...
+from tensorflow.python.autograph.impl.api import do_not_convert as do_not_convert
 
-class Feature:
-    ALL: Any
-    AUTO_CONTROL_DEPS: Any
-    ASSERT_STATEMENTS: Any
-    BUILTIN_FUNCTIONS: Any
-    EQUALITY_OPERATORS: Any
-    LISTS: Any
-    NAME_SCOPES: Any
+from tensorflow.python.autograph.core.converter import Feature as Feature
 
 def __getattr__(name: str) -> Any: ...
