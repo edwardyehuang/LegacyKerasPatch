@@ -13,6 +13,7 @@ from . import raw_ops as raw_ops
 from . import experimental as experimental
 from . import debugging as debugging
 from . import autograph as autograph
+from . import config as config
 
 # Core classes
 class Tensor: ...
