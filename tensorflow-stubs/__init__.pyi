@@ -14,6 +14,7 @@ from . import experimental as experimental
 from . import debugging as debugging
 from . import autograph as autograph
 from . import config as config
+from . import data as data
 from . import distribute as distribute
 from . import tpu as tpu
 
