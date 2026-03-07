@@ -18,8 +18,6 @@ from . import data as data
 from . import distribute as distribute
 from . import tpu as tpu
 
-from tensorflow.python.framework.ops import device_v2 as device
-
 # Core classes
 class Tensor: ...
 class Variable: ...
