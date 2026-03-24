@@ -16,6 +16,7 @@ from . import autograph as autograph
 from . import config as config
 from . import data as data
 from . import distribute as distribute
+from . import io as io
 from . import tpu as tpu
 
 # Core classes
