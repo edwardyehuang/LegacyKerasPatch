@@ -283,8 +283,22 @@ def slice(x, start, shape):
 
 
 def slice_update(x, start_indices, values):
-    """Update an input tensor starting at the provided indices."""
-    rank = x.shape.rank or values.shape.rank
+    """Update a tensor by inserting `values` at `start_indices`.
+
+    Args:
+        x: Input tensor to update.
+        start_indices: Starting index for each dimension of `x`.
+        values: Tensor to write into `x`.
+
+    Returns:
+        A tensor with the same shape and dtype as `x`.
+    """
+    x_rank = x.shape.rank
+    values_rank = values.shape.rank
+    if x_rank is not None and values_rank is not None and x_rank != values_rank:
+        raise ValueError("`x` and `values` must have the same rank.")
+
+    rank = x_rank if x_rank is not None else values_rank
     if rank is None:
         raise ValueError("slice_update requires `x` or `values` to have a known rank.")
 
