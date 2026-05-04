@@ -302,7 +302,9 @@ def slice_update(x, start_indices, values):
     if rank is None:
         raise ValueError("slice_update requires `x` or `values` to have a known rank.")
 
-    start_indices = _tf.cast(_tf.reshape(_tf.convert_to_tensor(start_indices), [-1]), _tf.int32)
+    start_indices = _tf.convert_to_tensor(start_indices)
+    start_indices = _tf.reshape(start_indices, [-1])
+    start_indices = _tf.cast(start_indices, _tf.int32)
     update_shape = _tf.shape(values, out_type=start_indices.dtype)
     indices = [
         _tf.range(start_indices[i], start_indices[i] + update_shape[i], dtype=start_indices.dtype)
