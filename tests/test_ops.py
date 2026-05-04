@@ -173,6 +173,26 @@ class TestArrayOps:
         result = ops.slice(x, [0, 1], [2, 2])
         expected = np.array([[2.0, 3.0], [5.0, 6.0]])
         np.testing.assert_array_equal(result.numpy(), expected)
+
+    def test_slice_update(self):
+        """Test slice update operation."""
+        x = tf.constant([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+        updates = tf.constant([[20.0, 30.0], [50.0, 60.0]])
+        result = ops.slice_update(x, [0, 1], updates)
+        expected = np.array([[1.0, 20.0, 30.0], [4.0, 50.0, 60.0]])
+        np.testing.assert_array_equal(result.numpy(), expected)
+
+    def test_slice_update_graph_mode(self):
+        """Test slice update operation in TensorFlow graph mode."""
+        x = tf.constant([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+        updates = tf.constant([[20.0, 30.0], [50.0, 60.0]])
+
+        @tf.function
+        def update():
+            return ops.slice_update(x, [0, 1], updates)
+
+        expected = np.array([[1.0, 20.0, 30.0], [4.0, 50.0, 60.0]])
+        np.testing.assert_array_equal(update().numpy(), expected)
     
     def test_scatter(self):
         """Test scatter operation."""

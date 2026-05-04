@@ -282,21 +282,22 @@ def slice(x, start, shape):
     return _tf.slice(x, start, shape)
 
 
-def slice_update(x, slices, values):
-    """Update a slice of a tensor."""
-    # Convert slices to indices
-    indices = []
-    for i, s in enumerate(slices):
-        if isinstance(s, int):
-            indices.append(_tf.constant([s]))
-        else:
-            indices.append(_tf.range(s.start or 0, s.stop or _tf.shape(x)[i], s.step or 1))
-    
-    # Create meshgrid of indices
-    mesh = _tf.meshgrid(*indices, indexing='ij')
-    indices = _tf.stack([_tf.reshape(m, [-1]) for m in mesh], axis=-1)
-    
-    return _tf.tensor_scatter_nd_update(x, indices, _tf.reshape(values, [-1]))
+def slice_update(x, start_indices, values):
+    """Update an input tensor starting at the provided indices."""
+    rank = x.shape.rank or values.shape.rank
+    if rank is None:
+        raise ValueError("slice_update requires `x` or `values` to have a known rank.")
+
+    start_indices = _tf.cast(_tf.reshape(_tf.convert_to_tensor(start_indices), [-1]), _tf.int32)
+    update_shape = _tf.shape(values, out_type=start_indices.dtype)
+    indices = [
+        _tf.range(start_indices[i], start_indices[i] + update_shape[i], dtype=start_indices.dtype)
+        for i in range(rank)
+    ]
+
+    mesh = _tf.meshgrid(*indices, indexing="ij")
+    scatter_indices = _tf.stack([_tf.reshape(m, [-1]) for m in mesh], axis=-1)
+    return _tf.tensor_scatter_nd_update(x, scatter_indices, _tf.reshape(values, [-1]))
 
 
 def stft(x, sequence_length, sequence_stride, fft_length=None, window="hann", center=True):
