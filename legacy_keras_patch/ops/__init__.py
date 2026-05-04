@@ -282,21 +282,38 @@ def slice(x, start, shape):
     return _tf.slice(x, start, shape)
 
 
-def slice_update(x, slices, values):
-    """Update a slice of a tensor."""
-    # Convert slices to indices
-    indices = []
-    for i, s in enumerate(slices):
-        if isinstance(s, int):
-            indices.append(_tf.constant([s]))
-        else:
-            indices.append(_tf.range(s.start or 0, s.stop or _tf.shape(x)[i], s.step or 1))
-    
-    # Create meshgrid of indices
-    mesh = _tf.meshgrid(*indices, indexing='ij')
-    indices = _tf.stack([_tf.reshape(m, [-1]) for m in mesh], axis=-1)
-    
-    return _tf.tensor_scatter_nd_update(x, indices, _tf.reshape(values, [-1]))
+def slice_update(x, start_indices, values):
+    """Update a tensor by inserting `values` at `start_indices`.
+
+    Args:
+        x: Input tensor to update.
+        start_indices: Starting index for each dimension of `x`.
+        values: Tensor to write into `x`.
+
+    Returns:
+        A tensor with the same shape and dtype as `x`.
+    """
+    x_rank = x.shape.rank
+    values_rank = values.shape.rank
+    if x_rank is not None and values_rank is not None and x_rank != values_rank:
+        raise ValueError("`x` and `values` must have the same rank.")
+
+    rank = x_rank if x_rank is not None else values_rank
+    if rank is None:
+        raise ValueError("slice_update requires `x` or `values` to have a known rank.")
+
+    start_indices = _tf.convert_to_tensor(start_indices)
+    start_indices = _tf.reshape(start_indices, [-1])
+    start_indices = _tf.cast(start_indices, _tf.int32)
+    update_shape = _tf.shape(values, out_type=start_indices.dtype)
+    indices = [
+        _tf.range(start_indices[i], start_indices[i] + update_shape[i], dtype=start_indices.dtype)
+        for i in range(rank)
+    ]
+
+    mesh = _tf.meshgrid(*indices, indexing="ij")
+    scatter_indices = _tf.stack([_tf.reshape(m, [-1]) for m in mesh], axis=-1)
+    return _tf.tensor_scatter_nd_update(x, scatter_indices, _tf.reshape(values, [-1]))
 
 
 def stft(x, sequence_length, sequence_stride, fft_length=None, window="hann", center=True):
