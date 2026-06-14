@@ -651,6 +651,131 @@ class TestGetVariablePath:
         assert "bias" in path
 
 
+class TestModelFitWithDistribution:
+    """Integration tests for model.fit with 2D dtensor distribution."""
+
+    def test_model_fit_with_model_parallel_2d_mesh(self):
+        """Test model.fit works within a ModelParallel scope with 2D mesh."""
+        import numpy as np
+        import tensorflow as tf
+        from legacy_keras_patch.distribution import (
+            DeviceMesh, LayoutMap, ModelParallel, distribution, list_devices,
+        )
+
+        devices = list_devices("CPU")
+        if len(devices) < 4:
+            pytest.skip("Need at least 4 CPU devices for 2D mesh test")
+
+        # Use first 4 devices for a 2x2 mesh
+        mesh = DeviceMesh(
+            shape=(2, 2),
+            axis_names=["batch", "model"],
+            devices=devices[:4],
+        )
+        layout_map = LayoutMap(device_mesh=mesh)
+        layout_map["dense.*kernel"] = (None, "model")
+        layout_map["dense.*bias"] = ("model",)
+
+        mp = ModelParallel(layout_map=layout_map, batch_dim_name="batch")
+
+        with mp.scope():
+            assert distribution() is mp
+
+            model = tf.keras.Sequential([
+                tf.keras.layers.Input(shape=(8,)),
+                tf.keras.layers.Dense(4, name="dense_0"),
+                tf.keras.layers.Dense(2, name="dense_1"),
+            ])
+            model.compile(optimizer="sgd", loss="mse")
+
+            x = np.random.randn(8, 8).astype("float32")
+            y = np.random.randn(8, 2).astype("float32")
+            history = model.fit(x, y, epochs=1, batch_size=4, verbose=0)
+
+            assert "loss" in history.history
+            assert len(history.history["loss"]) == 1
+
+        # Scope should be restored after exit
+        assert distribution() is None
+
+    def test_model_fit_with_data_parallel(self):
+        """Test model.fit works within a DataParallel scope."""
+        import numpy as np
+        import tensorflow as tf
+        from legacy_keras_patch.distribution import (
+            DeviceMesh, DataParallel, distribution, list_devices,
+        )
+
+        devices = list_devices("CPU")
+        if len(devices) < 2:
+            pytest.skip("Need at least 2 CPU devices for DataParallel test")
+
+        mesh = DeviceMesh(
+            shape=(2,), axis_names=["batch"], devices=devices[:2],
+        )
+        dp = DataParallel(device_mesh=mesh)
+
+        with dp.scope():
+            assert distribution() is dp
+
+            model = tf.keras.Sequential([
+                tf.keras.layers.Input(shape=(4,)),
+                tf.keras.layers.Dense(3),
+                tf.keras.layers.Dense(1),
+            ])
+            model.compile(optimizer="sgd", loss="mse")
+
+            x = np.random.randn(8, 4).astype("float32")
+            y = np.random.randn(8, 1).astype("float32")
+            history = model.fit(x, y, epochs=2, batch_size=4, verbose=0)
+
+            assert "loss" in history.history
+            assert len(history.history["loss"]) == 2
+
+        assert distribution() is None
+
+    def test_model_evaluate_with_model_parallel_2d_mesh(self):
+        """Test model.evaluate works within a ModelParallel scope."""
+        import numpy as np
+        import tensorflow as tf
+        from legacy_keras_patch.distribution import (
+            DeviceMesh, LayoutMap, ModelParallel, list_devices,
+        )
+
+        devices = list_devices("CPU")
+        if len(devices) < 4:
+            pytest.skip("Need at least 4 CPU devices for 2D mesh test")
+
+        mesh = DeviceMesh(
+            shape=(2, 2),
+            axis_names=["batch", "model"],
+            devices=devices[:4],
+        )
+        layout_map = LayoutMap(device_mesh=mesh)
+        layout_map["dense.*kernel"] = (None, "model")
+
+        mp = ModelParallel(layout_map=layout_map, batch_dim_name="batch")
+
+        with mp.scope():
+            model = tf.keras.Sequential([
+                tf.keras.layers.Input(shape=(6,)),
+                tf.keras.layers.Dense(4, name="dense_0"),
+                tf.keras.layers.Dense(2, name="dense_1"),
+            ])
+            model.compile(optimizer="sgd", loss="mse")
+
+            x = np.random.randn(8, 6).astype("float32")
+            y = np.random.randn(8, 2).astype("float32")
+
+            # Train first
+            model.fit(x, y, epochs=1, batch_size=4, verbose=0)
+
+            # Then evaluate
+            loss = model.evaluate(x, y, verbose=0)
+            assert isinstance(loss, float)
+            assert loss >= 0.0
+
+
 class TestMainModuleDistribution:
     """Test that distribution is part of the main module exports."""
 

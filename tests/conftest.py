@@ -4,6 +4,19 @@ import pytest
 import numpy as np
 import tensorflow as tf
 
+# Configure multiple virtual CPUs for dtensor distribution tests.
+# This must happen before any TF operations use the devices.
+_physical_cpus = tf.config.list_physical_devices("CPU")
+if _physical_cpus:
+    try:
+        tf.config.set_logical_device_configuration(
+            _physical_cpus[0],
+            [tf.config.LogicalDeviceConfiguration() for _ in range(8)],
+        )
+    except RuntimeError:
+        # Devices already configured (e.g., re-import)
+        pass
+
 
 @pytest.fixture
 def sample_tensor():
