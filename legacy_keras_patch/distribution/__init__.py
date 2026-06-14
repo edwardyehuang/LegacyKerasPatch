@@ -831,7 +831,9 @@ def distribute_variable(initial_value, layout, **kwargs):
         return tf.Variable(initial_value, **kwargs)
 
     try:
-        # If initial_value is a callable (initializer), call it with layout
+        # If initial_value is a callable (initializer), call it with layout.
+        # Note: shape and dtype are consumed here since DVariable doesn't
+        # accept them — they are only needed for the initializer call.
         if callable(initial_value):
             shape = kwargs.pop("shape", None)
             dtype = kwargs.pop("dtype", tf.float32)
@@ -843,9 +845,9 @@ def distribute_variable(initial_value, layout, **kwargs):
                 init_val = initial_value()
                 init_val = _dtensor.copy_to_mesh(init_val, backend_layout)
         else:
+            dtype = kwargs.pop("dtype", tf.float32)
             init_tensor = tf.cast(
-                tf.convert_to_tensor(initial_value),
-                kwargs.get("dtype", tf.float32),
+                tf.convert_to_tensor(initial_value), dtype
             )
             init_val = _dtensor.copy_to_mesh(init_tensor, backend_layout)
 
@@ -912,11 +914,21 @@ def distribute_data_input(data, layout):
             # Get the number of devices along the sharded axis
             shard_axis_name = backend_layout.sharding_specs[batch_dim]
             num_shards = mesh.dim_size(shard_axis_name)
+            # Validate batch size is evenly divisible
+            batch_size = data.shape[batch_dim]
+            if batch_size is not None and batch_size % num_shards != 0:
+                raise ValueError(
+                    f"Data dimension {batch_dim} (size={batch_size}) is not "
+                    f"evenly divisible by the number of shards "
+                    f"({num_shards}) along axis '{shard_axis_name}'."
+                )
             # Split data along the batch dimension
             splits = tf.split(data, num_shards, axis=batch_dim)
             return _dtensor.pack(splits, backend_layout)
         else:
-            # Fully replicated - pack identical copies
+            # Fully replicated — pack identical copies to each device.
+            # Note: this path is for single-client setups. Multi-client
+            # distributed training may require different logic.
             num_devices = mesh.num_local_devices()
             copies = [data] * num_devices
             return _dtensor.pack(copies, backend_layout)
