@@ -38,6 +38,8 @@ setup(
         "keras-stubs.saving",
         "keras-stubs.utils",
         "tensorflow-stubs",
+        "tensorflow-stubs.python",
+        "tensorflow-stubs.python.ops",
         "tensorflow-stubs.nn",
         "tensorflow-stubs.math",
         "tensorflow-stubs.linalg",
@@ -97,6 +99,8 @@ setup(
         "tensorflow-stubs": [
             "__init__.pyi",
             "METADATA.toml",
+            "python/*.pyi",
+            "python/ops/*.pyi",
             "nn/*.pyi",
             "math/*.pyi",
             "linalg/*.pyi",
